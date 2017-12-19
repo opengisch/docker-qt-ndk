@@ -84,10 +84,3 @@ RUN mkdir /tmp/android && cd /tmp/android && curl -Lo ndk.xz "https://www.crysta
 
 # Reconfigure locale
 RUN locale-gen en_US.UTF-8 && dpkg-reconfigure locales
-
-# Add group & user
-RUN groupadd -r user && useradd --create-home --gid user user && echo 'user ALL=NOPASSWD: ALL' > /etc/sudoers.d/user
-
-USER user
-WORKDIR /home/user
-ENV HOME /home/user
