@@ -75,7 +75,7 @@ RUN curl -Lo /tmp/qt/installer.run "https://download.qt-project.org/official_rel
 # Download & unpack android SDK
 RUN mkdir /tmp/android && curl -Lo /tmp/android/sdk.tgz "https://dl.google.com/android/android-sdk_r${ANDROID_SDK_VERSION}-linux.tgz" \
     && bsdtar --no-same-owner -xf /tmp/android/sdk.tgz -C /opt \
-    && rm -rf /tmp/android && echo "y" | android update sdk -u -a -t tools,platform-tools,build-tools-21.1.2,$ANDROID_NDK_PLATFORM
+    && rm -rf /tmp/android && echo "y" | android update sdk -u -a -t tools,platform-tools,build-tools-24.0.0,$ANDROID_NDK_PLATFORM
 
 # Download & unpack android NDK
 RUN mkdir /tmp/android && cd /tmp/android && curl -Lo ndk.xz "https://www.crystax.net/download/crystax-ndk-${CRYSTAX_NDK_VERSION}-linux-x86_64.tar.xz" \
