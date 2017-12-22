@@ -79,11 +79,11 @@ RUN mkdir /tmp/android && curl -Lo /tmp/android/sdk.tgz "https://dl.google.com/a
 
 # Download & unpack android NDK & remove any platform which is not 
 RUN mkdir /tmp/android \
-    && pushd /tmp/android \
+    && cd /tmp/android \
     && curl -Lo ndk.xz "https://www.crystax.net/download/crystax-ndk-${CRYSTAX_NDK_VERSION}-linux-x86_64.tar.xz" \
     && bsdtar -xf /tmp/android/ndk.xz -C /tmp \
     && mv /tmp/crystax-ndk-${CRYSTAX_NDK_VERSION} $ANDROID_NDK_ROOT \
-    && popd \
+    && cd / \
     && rm -rf /tmp/android \
     && find /opt/android-ndk/platforms/* -maxdepth 0 ! -name "$ANDROID_NDK_PLATFORM" -type d -exec rm -r {} +
 
