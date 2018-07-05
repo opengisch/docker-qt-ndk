@@ -11,17 +11,15 @@ ARG SDK_PACKAGES="tools platform-tools"
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV QT_PATH /opt/Qt
-ENV QT_ANDROID ${QT_PATH}/${QT_VERSION}/android_armv7
+ENV QT_ANDROID_BASE ${QT_PATH}/${QT_VERSION}
 ENV ANDROID_HOME /opt/android-sdk
 ENV ANDROID_SDK_ROOT ${ANDROID_HOME}
 ENV ANDROID_NDK_ROOT /opt/android-ndk
-ENV ANDROID_NDK_TOOLCHAIN_PREFIX arm-linux-androideabi
 ENV ANDROID_NDK_TOOLCHAIN_VERSION 4.9
 ENV ANDROID_NDK_HOST linux-x86_64
 ENV ANDROID_NDK_PLATFORM ${SDK_PLATFORM}
-ENV ANDROID_NDK_TOOLS_PREFIX ${ANDROID_NDK_TOOLCHAIN_PREFIX}
 ENV QMAKESPEC android-g++
-ENV PATH ${QT_ANDROID}/bin:${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}
+ENV PATH ${ANDROID_HOME}/tools:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}
 
 # Install updates & requirements:
 #  * git, openssh-client, ca-certificates - clone & build
