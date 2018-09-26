@@ -5,7 +5,7 @@ FROM ubuntu:16.04
 MAINTAINER Rabit <home@rabits.org> (@rabits)
 ARG QT_VERSION=5.11.2
 ARG CRYSTAX_NDK_VERSION=10.3.2
-ARG SDK_PLATFORM=android-18
+ARG SDK_PLATFORM=android-19
 ARG SDK_BUILD_TOOLS=27.0.0
 ARG SDK_PACKAGES="tools platform-tools"
 
