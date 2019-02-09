@@ -1,11 +1,11 @@
 # Minimal docker container to build project
 # Image: rabits/qt:5.9-android
 
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 MAINTAINER Rabit <home@rabits.org> (@rabits)
-ARG QT_VERSION=5.11.3
-ARG CRYSTAX_NDK_VERSION=10.3.2
-ARG SDK_PLATFORM=android-21
+ARG QT_VERSION=5.12.1
+ARG NDK_VERSION=r19
+ARG SDK_PLATFORM=android-26
 ARG SDK_BUILD_TOOLS=28.0.2
 ARG SDK_PACKAGES="tools platform-tools"
 
@@ -15,7 +15,6 @@ ENV QT_ANDROID_BASE ${QT_PATH}/${QT_VERSION}
 ENV ANDROID_HOME /opt/android-sdk
 ENV ANDROID_SDK_ROOT ${ANDROID_HOME}
 ENV ANDROID_NDK_ROOT /opt/android-ndk
-ENV ANDROID_NDK_TOOLCHAIN_VERSION 4.9
 ENV ANDROID_NDK_HOST linux-x86_64
 ENV ANDROID_NDK_PLATFORM android-21
 ENV QMAKESPEC android-g++
@@ -36,7 +35,7 @@ RUN dpkg --add-architecture i386 && apt-get -qq update && apt-get -qq dist-upgra
     sudo \
     curl \
     make \
-    default-jdk \
+    openjdk-8-jdk \
     ant \
     bsdtar \
     libsm6 \
@@ -73,6 +72,7 @@ RUN curl -k -Lo /tmp/qt/installer.run "https://download.qt-project.org/official_
     && rm -rf /tmp/qt
 
 # Download & unpack android SDK
+ENV JAVA_OPTS="-XX:+IgnoreUnrecognizedVMOptions --add-modules java.se.ee"
 RUN curl -Lo /tmp/sdk-tools.zip 'https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip' \
     && mkdir -p ${ANDROID_HOME} \
     && unzip /tmp/sdk-tools.zip -d ${ANDROID_HOME} \
@@ -81,10 +81,9 @@ RUN curl -Lo /tmp/sdk-tools.zip 'https://dl.google.com/android/repository/sdk-to
 
 # Download & unpack android NDK & remove any platform which is not 
 RUN mkdir /tmp/android \
-    && cd /tmp/android \
-    && curl -Lo ndk.xz "https://www.crystax.net/download/crystax-ndk-${CRYSTAX_NDK_VERSION}-linux-x86_64.tar.xz" \
-    && bsdtar -xf /tmp/android/ndk.xz -C /tmp \
-    && mv /tmp/crystax-ndk-${CRYSTAX_NDK_VERSION} ${ANDROID_NDK_ROOT} \
+    && curl -Lo /tmp/android/ndk.zip "https://dl.google.com/android/repository/android-ndk-${NDK_VERSION}-linux-x86_64.zip" \
+    && unzip /tmp/android/ndk.zip -d /tmp \
+    && mv /tmp/android-ndk-${NDK_VERSION} ${ANDROID_NDK_ROOT} \
     && cd / \
     && rm -rf /tmp/android \
     && find ${ANDROID_NDK_ROOT}/platforms/* -maxdepth 0 ! -name "$ANDROID_NDK_PLATFORM" -type d -exec rm -r {} +
