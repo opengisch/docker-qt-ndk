@@ -3,10 +3,10 @@
 
 FROM ubuntu:18.04
 MAINTAINER Rabit <home@rabits.org> (@rabits)
-ARG QT_VERSION=5.12.1
+ARG QT_VERSION=5.13.1
 ARG NDK_VERSION=r19
-ARG SDK_PLATFORM=android-26
-ARG SDK_BUILD_TOOLS=28.0.2
+ARG SDK_PLATFORM=android-21
+ARG SDK_BUILD_TOOLS=28.0.3
 ARG SDK_PACKAGES="tools platform-tools"
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -67,12 +67,18 @@ COPY extract-qt-installer.sh /tmp/qt/
 
 # Download & unpack Qt toolchains & clean
 RUN curl -k -Lo /tmp/qt/installer.run "https://download.qt-project.org/official_releases/qt/$(echo ${QT_VERSION} | cut -d. -f 1-2)/${QT_VERSION}/qt-opensource-linux-x64-${QT_VERSION}.run" \
-    && QT_CI_PACKAGES=qt.qt5.$(echo "${QT_VERSION}" | tr -d .).android_armv7,qt.qt5.$(echo "${QT_VERSION}" | tr -d .).android_x86 /tmp/qt/extract-qt-installer.sh /tmp/qt/installer.run "${QT_PATH}" \
+
+    && QT_CI_PACKAGES=\
+qt.qt5.$(echo "${QT_VERSION}" | tr -d .).android_arm64_v8a,\
+qt.qt5.$(echo "${QT_VERSION}" | tr -d .).android_armv7,\
+qt.qt5.$(echo "${QT_VERSION}" | tr -d .).android_x86 \
+/tmp/qt/extract-qt-installer.sh /tmp/qt/installer.run "${QT_PATH}" \
     && find "${QT_PATH}" -mindepth 1 -maxdepth 1 ! -name "${QT_VERSION}" -exec echo 'Cleaning Qt SDK: {}' \; -exec rm -r '{}' \; \
     && rm -rf /tmp/qt
 
 # Download & unpack android SDK
-ENV JAVA_OPTS="-XX:+IgnoreUnrecognizedVMOptions --add-modules java.se.ee"
+# ENV JAVA_OPTS="-XX:+IgnoreUnrecognizedVMOptions --add-modules java.se.ee"
+RUN apt-get remove -qq -y openjdk-11-jre-headless
 RUN curl -Lo /tmp/sdk-tools.zip 'https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip' \
     && mkdir -p ${ANDROID_HOME} \
     && unzip /tmp/sdk-tools.zip -d ${ANDROID_HOME} \
