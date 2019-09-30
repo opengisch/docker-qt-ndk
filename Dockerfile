@@ -71,6 +71,7 @@ RUN curl -k -Lo /tmp/qt/installer.run "https://download.qt-project.org/official_
     && QT_CI_PACKAGES=\
 qt.qt5.$(echo "${QT_VERSION}" | tr -d .).android_arm64_v8a,\
 qt.qt5.$(echo "${QT_VERSION}" | tr -d .).android_armv7,\
+qt.qt5.$(echo "${QT_VERSION}" | tr -d .).android_x86_64,\
 qt.qt5.$(echo "${QT_VERSION}" | tr -d .).android_x86 \
 /tmp/qt/extract-qt-installer.sh /tmp/qt/installer.run "${QT_PATH}" \
     && find "${QT_PATH}" -mindepth 1 -maxdepth 1 ! -name "${QT_VERSION}" -exec echo 'Cleaning Qt SDK: {}' \; -exec rm -r '{}' \; \
