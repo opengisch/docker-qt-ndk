@@ -1,9 +1,9 @@
 # Minimal docker container to build project
 # Image: rabits/qt:5.9-android
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 MAINTAINER Rabit <home@rabits.org> (@rabits)
-ARG QT_VERSION=5.14.2
+ARG QT_VERSION=5.13.2
 ARG NDK_VERSION=r19
 ARG SDK_PLATFORM=android-21
 ARG SDK_BUILD_TOOLS=28.0.3
@@ -37,7 +37,8 @@ RUN dpkg --add-architecture i386 && apt-get -qq update && apt-get -qq dist-upgra
     make \
     openjdk-8-jdk \
     ant \
-    bsdtar \
+    libarchive-tools \
+    p7zip-full \
     libsm6 \
     libice6 \
     libxext6 \
@@ -65,17 +66,22 @@ RUN apt-get install -qq -y --no-install-recommends \
 
 COPY extract-qt-installer.sh /tmp/qt/
 
-# Download & unpack Qt toolchains & clean
-RUN curl -k -Lo /tmp/qt/installer.run "https://download.qt-project.org/official_releases/qt/$(echo ${QT_VERSION} | cut -d. -f 1-2)/${QT_VERSION}/qt-opensource-linux-x64-${QT_VERSION}.run" \
+COPY install-qt.sh /tmp/qt/
 
-    && QT_CI_PACKAGES=\
-qt.qt5.$(echo "${QT_VERSION}" | tr -d .).android_arm64_v8a,\
-qt.qt5.$(echo "${QT_VERSION}" | tr -d .).android_armv7,\
-qt.qt5.$(echo "${QT_VERSION}" | tr -d .).android_x86_64,\
-qt.qt5.$(echo "${QT_VERSION}" | tr -d .).android_x86 \
-/tmp/qt/extract-qt-installer.sh /tmp/qt/installer.run "${QT_PATH}" \
-    && find "${QT_PATH}" -mindepth 1 -maxdepth 1 ! -name "${QT_VERSION}" -exec echo 'Cleaning Qt SDK: {}' \; -exec rm -r '{}' \; \
-    && rm -rf /tmp/qt
+RUN for tc in "android_x86_64" "android_x86" "android_armv7" "android_arm64_v8a"; do /tmp/qt/install-qt.sh --version ${QT_VERSION} --target android --directory "${QT_PATH}" --toolchain $tc \
+      qtbase \
+      qtsensors \
+      qtquickcontrols2 \
+      qtquickcontrols \
+      qtmultimedia \
+      qtlocation \
+      qtimageformats \
+      qtgraphicaleffects \
+      qtdeclarative \
+      qtandroidextras \
+      qttools \
+      qtimageformats \
+      qtsvg; done
 
 # Download & unpack android SDK
 # ENV JAVA_OPTS="-XX:+IgnoreUnrecognizedVMOptions --add-modules java.se.ee"
